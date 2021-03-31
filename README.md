@@ -1,3 +1,2 @@
-Custom Movie Library on:
-Backend: NODE JS (Mongoose + Express) - In Progress...\n
+Custom Movie Library on: Backend: NODE JS (Mongoose + Express) - In Progress...<br/>
 Frontend: VUE JS 3 - To Do...
