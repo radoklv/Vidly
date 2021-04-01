@@ -4,6 +4,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 
+const genres = require('./routes/genres');
+const customers = require('./routes/customers');
+const movies = require('./routes/movies');
+const rentals = require('./routes/rentals');
+const users = require('./routes/users');
+const auth = require('./routes/auth'); 
+
 //mongoose
 mongoose.connect('mongodb://localhost/vidly')
     .then(()=>{
@@ -13,18 +20,17 @@ mongoose.connect('mongodb://localhost/vidly')
     })
 
 // Routes
-const genres = require('./routes/genres');
-const customers = require('./routes/customers');
-const movies = require('./routes/movies');
-const rentals = require('./routes/rentals');
+
 
 app.use(express.json());
 
 //Assign Routes
 app.use('/api/genres', genres);
 app.use('/api/customers', customers);
-app.use('/api/movies', movies)
-app.use('/api/rentals', rentals)
+app.use('/api/movies', movies);
+app.use('/api/rentals', rentals);
+app.use('/api/users', users);
+app.use('/api/auth', auth)
 
 
 const port = process.env.PORT || 3000;
