@@ -1,3 +1,4 @@
+const config = require('config');
 const jwt = require('jsonwebtoken');
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
@@ -29,10 +30,7 @@ router.post("/", async (req, res) => {
    return res.status(400).send("Invalid Email or Password!");
   }
 
-  const token = jwt.sign(
-    {_id: user.id},//Тук специфицираме какво да има в Токена който ще генерираме
-    'jwtPrivateKey'
-  ) 
+  const token = user.generateAuthToken()//Това е метода който добавихме в User модула, за създаване на токен
 
   try{
     res.send(token);

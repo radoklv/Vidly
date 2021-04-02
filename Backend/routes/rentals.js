@@ -5,11 +5,12 @@ const { Customer } = require("../models/customers");
 const mongoose = require('mongoose');
 const express = require("express");
 const router = express.Router();
+const isAuth = require('../middlewere/auth');
 
 /* IMPORTANT!!! ALL ROUTES BEGIN WITH /api/rentals/ */
 
 
-Fawn.init(mongoose) // This is Transaction. For more info 9 Module-> 8 Lecture
+Fawn.init(mongoose) // Това е Transaction в базата данни.
 
 /*---------------------------------------- GET ----------------------------------------*/
 
@@ -19,7 +20,7 @@ router.get('/', async(req, res)=>{
 
 /*---------------------------------------- POST ----------------------------------------*/
 
-router.post("/", async (req, res) => {
+router.post("/", isAuth, async (req, res) => {//Тук 'auth' e middleware ф-я, служеща за валидиране на токена
   const { error } = validateRental(req.body);
 
   if (error) {
@@ -61,7 +62,7 @@ router.post("/", async (req, res) => {
 
     //OR
     
-    new Fawn.Task() // This is Transaction. For more info 9 Module-> 8 Lecture
+    new Fawn.Task() // Това е Transaction в базата данни.
       .save('rentals', rental)
       .update('movies',{_id: movie._id}, {
         $inc: {numberInStock: -1}

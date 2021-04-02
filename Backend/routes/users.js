@@ -4,6 +4,8 @@ const passwordComplexity = require('joi-password-complexity');
 const { User, validateUser } = require('../models/users');
 const express = require('express');
 const router = express.Router();
+const isAuth = require('../middlewere/auth');
+
 
 const complexityOptions = {
     min: 6,
@@ -17,10 +19,17 @@ const complexityOptions = {
 
 /* IMPORTANT!!! ALL ROUTES BEGIN WITH /api/users/ */
 
+/*---------------------------------------- GET ----------------------------------------*/
+
+router.get('/me', isAuth, async (req, res)=>{ // Този GET routе, работи само за оторизирани усери
+    const user = await User.findById(req.user._id).select('-password') // req.user._id взиа id-то, което е подадено при създаването на токена
+
+    res.send(user);
+})
 
 /*---------------------------------------- POST ----------------------------------------*/
 
-router.post("/", async(req, res)=>{
+router.post("/",isAuth, async(req, res)=>{
     const {error} = validateUser(req.body);
 
     if(error){
@@ -50,10 +59,12 @@ router.post("/", async(req, res)=>{
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt); // Хеширане на паролата
 
+    const token = user.generateAuthToken()//Това е метода който добавихме в User модула, за създаване на токен
+
 
     try{
         await user.save();
-        res.send( _.pick(user, ['_id', 'name', 'email'])); // По този начин чрез Lodash.pick, връщаме само елементите които искаме. Това се прави с цел, в случая, да не върнем паролата с респонса.
+        res.header('x-auth-token', token).send( _.pick(user, ['_id', 'name', 'email'])); // По този начин чрез Lodash.pick, връщаме само елементите които искаме. Това се прави с цел, в случая, да не върнем паролата с респонса.
     }catch(ex){
         res.status(400).send(ex.message);
     }
