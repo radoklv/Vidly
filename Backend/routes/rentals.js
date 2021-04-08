@@ -16,6 +16,7 @@ Fawn.init(mongoose) // Това е Transaction в базата данни.
 
 router.get('/', async(req, res)=>{
   const rentals = await Rental.find().sort();
+  res.send(rentals);
 })
 
 /*---------------------------------------- POST ----------------------------------------*/
@@ -44,6 +45,7 @@ router.post("/", isAuth, async (req, res) => {//Тук 'auth' e middleware ф-я
   let rental = new Rental({
     customer: {
       _id: customer._id,
+      name: customer.name,
       isGold: customer.isGold,
       phone: customer.phone,
     },

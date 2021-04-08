@@ -1,8 +1,8 @@
 const { Movie, validateMovie } = require("../models/movies");
 const { Genre } = require("../models/genres");
+const validateObjectId = require('../middlewere/validateObjoctId');
 const express = require("express");
 const router = express.Router();
-const authentication = require('../middlewere/auth');
 const isAuth = require('../middlewere/auth');
 const isAdmin = require('../middlewere/admin');
 
@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
   res.send(movies);
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", validateObjectId, async (req, res) => {
   try {
     const result = await Movie.find({ _id: req.params.id });
     res.send(result);
@@ -27,7 +27,7 @@ router.get("/:id", async (req, res) => {
 
 /*---------------------------------------- POST ----------------------------------------*/
 
-router.post('/',[isAuth, isAdmin], authentication, async (req, res) =>{//Тук 'authentication' e middleware ф-я, служеща за валидиране на токена
+router.post('/',[isAuth, isAdmin], async (req, res) =>{
 
   const {error} = validateMovie(req.body);
 
@@ -62,7 +62,7 @@ router.post('/',[isAuth, isAdmin], authentication, async (req, res) =>{//Тук 
 
 /*---------------------------------------- PUT ----------------------------------------*/
 
-router.put("/:id",[isAuth, isAdmin], async (req, res) => {
+router.put("/:id",[ isAuth, isAdmin, validateObjectId,], async (req, res) => {
   const { error } = validateMovie(req.body);
 
   if (error) {
@@ -104,7 +104,7 @@ router.put("/:id",[isAuth, isAdmin], async (req, res) => {
 
 /*---------------------------------------- DELETE ----------------------------------------*/
 
-router.delete("/:id", [isAuth, isAdmin],async (req, res) => {
+router.delete("/:id", [validateObjectId, isAuth, isAdmin],async (req, res) => {
   try {
     const movie = await Movie.findByIdAndRemove(req.params.id);
     res.send(movie);

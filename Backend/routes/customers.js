@@ -1,4 +1,5 @@
 const {Customer, validateCustomer} = require('../models/customers'); 
+const validateObjectId = require('../middlewere/validateObjoctId');
 const express = require("express");
 const router = express.Router();
 
@@ -48,7 +49,7 @@ router.post("/", async (req, res) => {
 
 /*---------------------------------------- PUT ----------------------------------------*/
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", validateObjectId, async (req, res) => {
   const validateRes = validateCustomer(req.body);
 
   if (validateRes.error) {
