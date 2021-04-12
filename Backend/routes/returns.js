@@ -16,11 +16,11 @@ router.get("/", asyncMiddleware(async (req, res) => {
     if (validateRes.error) {
       return res.status(400).send(validateRes.error.details[0].message);
     }
-  
-    const rental = await Rental.lookup(req.body.customerId, req.body.movieId); //Статичен метод на класа Rental
+
+    const rental = await Rental.findOne({_id: req.body.rentalId}); //Статичен метод на класа Rental
 
     if(!rental){
-        return res.status(404).send('Rental for this user with this movie was not found!')
+        return res.status(404).send('Tere is no rental with this ID!')
     }
 
     if(rental.dateReturned){
@@ -43,8 +43,7 @@ router.get("/", asyncMiddleware(async (req, res) => {
 
 function validateResult(genre) {
     const schema = Joi.object({
-      customerId: Joi.objectId().required(),
-      movieId: Joi.objectId().required(),
+      rentalId: Joi.objectId().required(),
     });
   
     return schema.validate(genre);

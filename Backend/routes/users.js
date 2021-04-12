@@ -54,7 +54,7 @@ router.post("/", async(req, res)=>{
         return res.send(isPassComplexMessages);
     }
  
-    user = new User(_.pick(req.body, ['firstName','lastName', 'email', 'password'])); //Може да създадем по този начин User-a. Чрез метода Lodash.pick, в случая, избираме само тези пропъртита от обекта user
+    user = new User(_.pick(req.body, ['firstName','lastName','phone', 'email', 'password'])); //Може да създадем по този начин User-a. Чрез метода Lodash.pick, в случая, избираме само тези пропъртита от обекта user
 
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt); // Хеширане на паролата

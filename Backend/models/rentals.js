@@ -3,9 +3,15 @@ const mongoose = require('mongoose');
 const moment = require('moment');
 
 const rentalSchema = new mongoose.Schema({
-    customer: {
+    user: {
         type: new mongoose.Schema({
-            name: {
+            firstName: {
+                type: String,
+                require: true,
+                minlength: 5,
+                maxlenght: 50
+            },
+            lastName:{
                 type: String,
                 require: true,
                 minlength: 5,
@@ -16,6 +22,13 @@ const rentalSchema = new mongoose.Schema({
                 require: true,
                 minlength: 5,
                 maxlength: 50
+            },
+            email:{
+                type: String,
+                required: true,
+                unique: true,
+                minlength: 5,
+                maxlength: 255,
             }
         }),
         required: true,
@@ -57,12 +70,12 @@ const rentalSchema = new mongoose.Schema({
 });
 
 
-rentalSchema.statics.lookup = function(customerId, movieId){
-    return this.findOne({
-        'customer._id': customerId,
-        'movie._id': movieId
-    })
-} 
+// rentalSchema.statics.lookup = function(customerId, movieId){
+//     return this.findOne({
+//         'user._id': userId,
+//         'movie._id': movieId
+//     })
+// } 
 
 rentalSchema.methods.return = function() { //Сетва dateReturned и пресмята rentalFee
     this.dateReturned = new Date();
@@ -77,7 +90,7 @@ const Rental = mongoose.model('Rental', rentalSchema);
 
 function validateRental(rental){
     const schema = Joi.object({
-        customerId: Joi.objectId().required(),
+        userId: Joi.objectId().required(),
         movieId: Joi.objectId().required()
     })
 

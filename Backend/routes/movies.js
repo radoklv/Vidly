@@ -6,6 +6,8 @@ const router = express.Router();
 const isAuth = require("../middlewere/auth");
 const isAdmin = require("../middlewere/admin");
 const upload = require("../middlewere/upload");
+const fs = require("fs");
+const _ = require('lodash');
 
 /* IMPORTANT!!! ALL ROUTES BEGIN WITH /api/movies/ */
 
@@ -29,13 +31,16 @@ router.get("/:id", validateObjectId, async (req, res) => {
 /*---------------------------------------- POST ----------------------------------------*/
 
 router.post("/", [isAuth, isAdmin, upload], async (req, res) => {
-
   req.body.cast = JSON.parse(req.body.cast);
 
   const { error } = validateMovie(req.body);
 
   if (req.file == undefined) {
-    res.status(400).send("Image is required. Only '.jpg' and '.png' format is accepted, with max size of 2mb");
+    res
+      .status(400)
+      .send(
+        "Image is required. Only '.jpg' and '.png' format is accepted, with max size of 2mb"
+      );
   }
 
   if (error) {
@@ -117,7 +122,14 @@ router.put("/:id", [isAuth, isAdmin, validateObjectId], async (req, res) => {
 router.delete("/:id", [validateObjectId, isAuth, isAdmin], async (req, res) => {
   try {
     const movie = await Movie.findByIdAndRemove(req.params.id);
-    res.send(movie);
+
+    fs.unlink(movie.movieImage, (err) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+    });
+    res.send(_.pick(movie, ['_id', 'title']));
   } catch (ex) {
     return res
       .status(404)

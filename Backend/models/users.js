@@ -29,6 +29,13 @@ const userSchema = new mongoose.Schema({
     minlength: 6,
     maxlength: 1024,
   },
+  phone: {
+    type: String,
+    required: true,
+    min: 9,
+    max: 12,
+    pattern: /^[0-9]{10}$/,
+  },
   isAdmin:{
     type: Boolean,
     default: false,
@@ -52,6 +59,7 @@ function validateUser(user) {
     lastName: Joi.string().min(3).max(50).required(),
     email: Joi.string().email().min(5).max(255).required(),
     password: Joi.string().min(6).max(255).required(),
+    phone: Joi.string().min(9).max(12).required(),
   });
 
   return schema.validate(user);

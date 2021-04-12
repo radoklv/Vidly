@@ -1,7 +1,7 @@
 const { Rental, validateRental } = require("../models/rentals");
 const Fawn = require('fawn')
 const { Movie } = require("../models/movies");
-const { Customer } = require("../models/customers");
+const { User } = require("../models/users");
 const mongoose = require('mongoose');
 const express = require("express");
 const router = express.Router();
@@ -28,9 +28,9 @@ router.post("/", isAuth, async (req, res) => {//Тук 'auth' e middleware ф-я
     res.status(400).send(error.details[0].message);
   }
 
-  const customer = await Customer.findById(req.body.customerId);
-  if (!customer) {
-    return res.status(400).send(`Invalid Customer Id!`);
+  const user = await User.findById(req.body.userId);
+  if (!user) {
+    return res.status(400).send(`Invalid User Id!`);
   }
 
   const movie = await Movie.findById(req.body.movieId);
@@ -43,11 +43,12 @@ router.post("/", isAuth, async (req, res) => {//Тук 'auth' e middleware ф-я
   }
 
   let rental = new Rental({
-    customer: {
-      _id: customer._id,
-      name: customer.name,
-      isGold: customer.isGold,
-      phone: customer.phone,
+    user: {
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone,
+      email: user.email
     },
     movie: {
       _id: movie._id,
