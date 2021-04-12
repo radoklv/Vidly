@@ -29,7 +29,7 @@ router.get('/me', isAuth, async (req, res)=>{ // Този GET routе, работ
 
 /*---------------------------------------- POST ----------------------------------------*/
 
-router.post("/",isAuth, async(req, res)=>{
+router.post("/", async(req, res)=>{
     const {error} = validateUser(req.body);
 
     if(error){
@@ -39,22 +39,22 @@ router.post("/",isAuth, async(req, res)=>{
     let user = await User.findOne({email: req.body.email});
 
     if(user){
-        res.status(400).send("User already register");
+        res.status(400).send("This User is already registered!");
     }
 
-    const isPassCompex = passwordComplexity(complexityOptions, 'Password').validate(req.body.password);
+    const isPassComplex = passwordComplexity(complexityOptions, 'Password').validate(req.body.password);
 
-    if(isPassCompex.error){
-        let isPassCompexMessages = "";
+    if(isPassComplex.error){
+        let isPassComplexMessages = "";
 
         for(let i in isPassCompex.error.details){
-            isPassCompexMessages += isPassCompex.error.details[i].message + '\n';  
+            isPassComplexMessages += isPassCompex.error.details[i].message + '\n';  
         }
         
-        return res.send(isPassCompexMessages);
+        return res.send(isPassComplexMessages);
     }
  
-    user = new User(_.pick(req.body, ['name', 'email', 'password'])); //Може да създадем по този начин User-a. Чрез метода Lodash.pick, в случая, избираме само тези пропъртита от обекта user
+    user = new User(_.pick(req.body, ['firstName','lastName', 'email', 'password'])); //Може да създадем по този начин User-a. Чрез метода Lodash.pick, в случая, избираме само тези пропъртита от обекта user
 
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt); // Хеширане на паролата
@@ -64,7 +64,7 @@ router.post("/",isAuth, async(req, res)=>{
 
     try{
         await user.save();
-        res.header('x-auth-token', token).send( _.pick(user, ['_id', 'name', 'email'])); // По този начин чрез Lodash.pick, връщаме само елементите които искаме. Това се прави с цел, в случая, да не върнем паролата с респонса.
+        res.header('x-auth-token', token).send( _.pick(user, ['_id', 'firstName', 'lastName', 'email', "isAdmin"])); // По този начин чрез Lodash.pick, връщаме само елементите които искаме. Това се прави с цел, в случая, да не върнем паролата с респонса.
     }catch(ex){
         res.status(400).send(ex.message);
     }

@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "body-parser": "^1.19.0",
     "config": "^3.3.6",
     "express": "^4.17.1",
     "fawn": "^2.1.5",
@@ -20,7 +21,8 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
-    "mongoose": "^5.12.2"
+    "mongoose": "^5.12.2",
+    "multer": "^1.4.2"
   },
   "devDependencies": {
     "jest": "^26.6.3",
